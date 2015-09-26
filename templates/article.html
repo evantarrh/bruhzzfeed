@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block body %}
+
+  <h1>{{title}}</h1>
+
+  {% for image in images %}
+    <img src="{{image}}" width="100">
+  {% endfor %}
+
+{% endblock %}
