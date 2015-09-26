@@ -8,19 +8,17 @@ client_id = config.imgur_client_id
 client_secret = config.imgur_client_secret
 
 imgur = ImgurClient(client_id, client_secret)
+clarifai_api = ClarifaiApi()  # assumes environment variables are set.
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
 @app.route("/")
 def hello():
-    clarifai_api = ClarifaiApi()  # assumes environment variables are set.
-    result = clarifai_api.tag_image_urls('http://www.clarifai.com/img/metro-north.jpg')
-    print(result)
-    return "hello world"
-  # categories = ["The More You Know", "funny", "cars"]
-  # pics = get_imgur_images(categories)
-  # return render_template("index.html", images=pics)
+    tags = clarifai_api.tag_image_urls('http://www.clarifai.com/img/metro-north.jpg')
+    categories = ["The More You Know", "funny", "cars"]
+    pics = get_imgur_images(categories)
+    return render_template("index.html", images=pics)
 
 def get_imgur_images(categories):
   images = []
