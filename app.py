@@ -1,21 +1,24 @@
 from flask import Flask, render_template, url_for, make_response, redirect
 from imgurpython import ImgurClient
 from backend import database as db
+from clarifai.client import ClarifaiApi
 import random, config
 
 client_id = config.imgur_client_id
 client_secret = config.imgur_client_secret
 
 imgur = ImgurClient(client_id, client_secret)
+clarifai_api = ClarifaiApi()  # assumes environment variables are set.
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
 @app.route("/")
 def hello():
-  categories = ["The More You Know", "funny", "cars"]
-  pics = get_imgur_images(categories)
-  return render_template("index.html", images=pics)
+    tags = clarifai_api.tag_image_urls('http://www.clarifai.com/img/metro-north.jpg')
+    categories = ["The More You Know", "funny", "cars"]
+    pics = get_imgur_images(categories)
+    return render_template("index.html", images=pics)
 
 def get_imgur_images(categories):
   images = []
