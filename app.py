@@ -15,10 +15,12 @@ app.config["DEBUG"] = True
 
 @app.route("/")
 def hello():
-    images = get_imgur_images(['animals','cats','tech'])
+    # TEST categories
+    categories = ['animals','tech','cats','dogs','funny','babies']
+    images = get_imgur_images(categories)
     tags = get_tags(images)
     print(tags)
-    return render_template("index.html")
+    return render_template("index.html", categories=categories)
 
 def get_imgur_images(categories):
   images = []
