@@ -4,5 +4,5 @@ adjectives = ["Amazing", "Unbelievable", "Incredible", "Beautiful", "Inspiring",
   "Illest", "Coolest", "Damn"]
 exclamations = ["Go Wow", "Shit Bricks", "Go Nuts", "Go Wild", "Salivate", "Believe In God",
   "Fall In Love",]
-number = ["13","21","9","7","24","14","19","38","29","25","31","23","33","17",]
+numbers = ["13","21","9","7","24","14","19","26","23","17"]
 years = ["2014","2015"]

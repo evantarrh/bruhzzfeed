@@ -6,8 +6,8 @@
   <div class="images-wrapper">
     {% for image in images %}
       <div class="list-item">
-        {{ loop.index }}. Wow. Just look at this
-        <img src="{{image}}" width="100">
+        {{ loop.index }}. Wow. Just look at this {{image[1]|random}}!
+        <img src="{{image[0]}}" width="100">
       </div>
     {% endfor %}
   </div>

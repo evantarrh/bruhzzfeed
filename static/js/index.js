@@ -7,6 +7,12 @@ $().ready(function() {
       return;
     }
     $(event.currentTarget).html('ok be patient...');
+    var patience = 'ok be patient...'
+    setInterval(function(){
+      var patienceIndex = patience.indexOf('patient');
+      patience = patience.slice(0, patienceIndex) + ' very ' + patience.slice(patienceIndex);
+      $(event.currentTarget).html(patience);
+    }, 2500);
     $.ajax({
       type: 'POST',
       data: formatCategories(categories),

@@ -1,3 +1,4 @@
 config.py
 *.pyc
 example_data.py
+example_tags.py
