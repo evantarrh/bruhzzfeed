@@ -2,7 +2,7 @@ from flask import Flask, render_template, url_for, make_response, redirect, requ
 from imgurpython import ImgurClient
 from backend import database as db
 from clarifai.client import ClarifaiApi
-import random, config
+import random, config, json
 
 client_id = config.imgur_client_id
 client_secret = config.imgur_client_secret
@@ -15,7 +15,9 @@ app.config["DEBUG"] = True
 
 @app.route("/")
 def hello():
-    # tags = clarifai_api.tag_image_urls('http://www.clarifai.com/img/metro-north.jpg')
+    images = get_imgur_images(['animals','cats','tech'])
+    tags = get_tags(images)
+    print(tags)
     return render_template("index.html")
 
 def get_imgur_images(categories):
@@ -60,6 +62,15 @@ def show_article(urlstring):
     return render_template('404.html')
 
   return render_template("article.html", title=info["title"], images=info["images"])
+
+
+def get_tags(urls):
+  tags = []
+  for i in range(0, len(urls)-1):
+    # tag = json.dumps(clarifai_api.tag_image_urls(str(urls[i]))['results'][0]['result']['tag']['classes'])
+    tag = "domestic"
+    tags.append(tag)
+  print tags
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
