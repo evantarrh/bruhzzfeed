@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, make_response, redirect
+from flask import Flask, render_template, url_for, make_response, redirect, request
 from imgurpython import ImgurClient
 from backend import database as db
 from clarifai.client import ClarifaiApi
@@ -15,18 +15,20 @@ app.config["DEBUG"] = True
 
 @app.route("/")
 def hello():
-    tags = clarifai_api.tag_image_urls('http://www.clarifai.com/img/metro-north.jpg')
-    categories = ["The More You Know", "funny", "cars"]
-    pics = get_imgur_images(categories)
-    return render_template("index.html", images=pics)
+    # tags = clarifai_api.tag_image_urls('http://www.clarifai.com/img/metro-north.jpg')
+    return render_template("index.html")
 
 def get_imgur_images(categories):
   images = []
-  images_per_category = 50 / len(categories)
+  images_per_category = 100 / len(categories)
   for category in categories:
     images_in_category = imgur.gallery_tag(category, sort="viral", window="day").items
     random.shuffle(images_in_category)
-    images += images_in_category[0:images_per_category]
+
+    # remove images that don't end in proper file type
+    for image in images_in_category[0:images_per_category]:
+      if image.link.split('.')[-1] in ["gif", "png", "jpg"]:
+        images.append(image.link)
   return images
 
 @app.route("/new", methods=["POST"])
@@ -38,6 +40,8 @@ def create_article():
   # use the tags to build an article name
   # make database entry with article name and URLs
 
+  print request.get_data()
+
   urlstring = db.addPage("fake title",
        ["http://i.imgur.com/RuxJy0U.jpg",
         "http://i.imgur.com/g16Zhpo.jpg",
@@ -47,7 +51,7 @@ def create_article():
         "http://i.imgur.com/coqU8Mx.png"]
   )
 
-  return redirect(url_for('show_article', urlstring=urlstring))
+  return urlstring
 
 @app.route("/<urlstring>", methods=["GET"])
 def show_article(urlstring):
