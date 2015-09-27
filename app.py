@@ -4,7 +4,7 @@ from backend import database as db
 from clarifai.client import ClarifaiApi
 import random, config, json, ast, operator
 from topia.termextract import tag as part_of_speech
-import example_data, structures, words
+import example_data, structures, words, example_tags
 
 client_id = config.imgur_client_id
 client_secret = config.imgur_client_secret
@@ -26,7 +26,8 @@ def hello():
 
 def get_imgur_images(categories):
   images = []
-  total_number_of_images = 5
+
+  total_number_of_images = 20
   images_per_category = total_number_of_images / len(categories)
   for category in categories:
     images_in_category = imgur.gallery_tag(category, sort="viral", window="day").items
@@ -47,13 +48,12 @@ def create_article():
 
   # categories = request.get_data().DO_SOME_MAGIC()
 
-  urls = get_imgur_images(["cats"])
+  urls = get_imgur_images(["cats","dogs","babies","funny"])
 
 
   # get tags for all the images ============================================
 
-  tags = get_tags(urls)
-
+  tags = example_tags.tags
 
   # figure out common tags =================================================
 
@@ -84,15 +84,12 @@ def create_article():
 
 
   # make database entry with article name and URLs =========================
+  images = []
 
-  urlstring = db.addPage(title,
-       ["http://i.imgur.com/RuxJy0U.jpg",
-        "http://i.imgur.com/g16Zhpo.jpg",
-        "http://i.imgur.com/UQprvMih.gif",
-        "http://i.imgur.com/TyCh8dT.jpg",
-        "http://i.imgur.com/JvLgTN0.jpg",
-        "http://i.imgur.com/coqU8Mx.png"]
-  )
+  for url in urls:
+      images.append(url)
+
+  urlstring = db.addPage(title,images)
 
   return urlstring
 
@@ -121,7 +118,7 @@ def get_tags(urls):
 
     all_tags.append(tuple)
 
-  print all_tags
+
   return all_tags
 
 def find_common_tags(tag_sets):
@@ -134,7 +131,7 @@ def find_common_tags(tag_sets):
       else:
         tags_to_urls[tag] = [tag_tuple[1]]
 
-  print tags_to_urls
+
 
   tag_frequencies = {}
 
@@ -156,36 +153,46 @@ def get_pos_for_tags(tags_dict):
 def get_title(nouns, plural_nouns, adjectives):
   sentence = random.choice(structures.sentence_structures)
   sentence = sentence.replace("number", "13")
+  # sentence = sentence.replace("number", "13")
+
   tags = []
 
   if "adverb" in sentence:
     adverb = random.choice(words.adverbs)
-    sentence = sentence.replace("adverb", adverb, 1)
+    sentence = sentence.replace("adverb", adverb.capitalize(), 1)
 
   while "noun" in sentence and len(nouns) > 0:
-    print sentence
+
     noun = random.choice(nouns)
     tags.append(noun)
     nouns.remove(noun)
-    sentence = sentence.replace("noun", noun, 1)
+    sentence = sentence.replace("noun", noun.capitalize(), 1)
 
   while "adjective" in sentence and len(adjectives) > 0:
     adjective = random.choice(adjectives)
     tags.append(adjective)
     adjectives.remove(adjective)
-    sentence = sentence.replace("adjective", adjective, 1)
+    sentence = sentence.replace("adjective", adjective.capitalize(), 1)
 
   while "adjective" in sentence:
     adjective = random.choice(words.adjectives)
-    sentence = sentence.replace("adjective", adjective, 1)
+    sentence = sentence.replace("adjective", adjective.capitalize(), 1)
 
   while "verb" in sentence:
     verb = random.choice(words.verbs)
-    sentence = sentence.replace("verb", verb, 1)
+    sentence = sentence.replace("verb", verb.capitalize(), 1)
 
-  if "exclaim" in sentence:
+  if "exclamations" in sentence:
     exclamation = random.choice(words.exclamations)
-    sentence = sentence.replace("exclaim", exclamation)
+    sentence = sentence.replace("exclamations", exclamation)
+
+  while "number" in sentence:
+    number = random.choice(words.number)
+    sentence = sentence.replace("number", number, 1)
+
+  while "years" in sentence:
+    number = random.choice(words.years)
+    sentence = sentence.replace("years", number, 1)
 
   return sentence
 
