@@ -4,7 +4,7 @@ from backend import database as db
 from clarifai.client import ClarifaiApi
 import random, config, json, ast, operator
 from topia.termextract import tag as part_of_speech
-import example_data
+import example_data, structures, words
 
 client_id = config.imgur_client_id
 client_secret = config.imgur_client_secret
@@ -77,7 +77,7 @@ def create_article():
     if tags_to_pos[tag] == "NNS":
       plural_noun_tags.append(tag)
 
-  print noun_tags, plural_noun_tags, adjective_tags
+  title = get_title(noun_tags, plural_noun_tags, adjective_tags)
 
   # select images most relevant to tags ====================================
 
@@ -87,7 +87,7 @@ def create_article():
 
   # make database entry with article name and URLs =========================
 
-  urlstring = db.addPage("fake title",
+  urlstring = db.addPage(title,
        ["http://i.imgur.com/RuxJy0U.jpg",
         "http://i.imgur.com/g16Zhpo.jpg",
         "http://i.imgur.com/UQprvMih.gif",
@@ -155,7 +155,43 @@ def get_pos_for_tags(tags_dict):
     tags_to_pos[tag] = pos_tagger(tag)[0][1]
   return tags_to_pos
 
+def get_title(nouns, plural_nouns, adjectives):
+  print type(structures.sentence_structures)
+  sentence = random.choice(structures.sentence_structures)
+  print sentence
+  sentence = sentence.replace("number", "13")
+  tags = []
 
+  if "adverb" in sentence:
+    adverb = random.choice(words.adverbs)
+    sentence = sentence.replace("adverb", adverb, 1)
+
+  while "noun" in sentence and len(nouns) > 0:
+    print sentence
+    noun = random.choice(nouns)
+    tags.append(noun)
+    nouns.remove(noun)
+    sentence = sentence.replace("noun", noun, 1)
+
+  while "adjective" in sentence and len(adjectives) > 0:
+    adjective = random.choice(adjectives)
+    tags.append(adjective)
+    adjectives.remove(adjective)
+    sentence = sentence.replace("adjective", adjective, 1)
+
+  while "adjective" in sentence:
+    adjective = random.choice(words.adjectives)
+    sentence = sentence.replace("adjective", adjective, 1)
+
+  while "verb" in sentence:
+    verb = random.choice(words.verbs)
+    sentence = sentence.replace("verb", verb, 1)
+
+  if "exclaim" in sentence:
+    exclamation = random.choice(words.exclamation)
+    sentence = sentence.replace("exclaim", exclamation)
+
+  return sentence
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
