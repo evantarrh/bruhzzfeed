@@ -7,10 +7,7 @@ import random, config, json, ast, operator
 from topia.termextract import tag as part_of_speech
 import structures, words
 
-client_id = config.imgur_client_id
-client_secret = config.imgur_client_secret
-
-imgur = ImgurClient(client_id, client_secret)
+imgur = ImgurClient(os.environ['IMGUR_CLIENT_ID'], os.environ['IMGUR_CLIENT_SECRET'])
 clarifai_api = ClarifaiApi()  # assumes environment variables are set.
 
 pos_tagger = part_of_speech.Tagger()
