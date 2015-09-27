@@ -3,6 +3,12 @@
 
   <h1>bruh</h1>
 
-  <button>go</button>
+   <ul class="buttons">
+   {% for category in categories %}
+    <li><div id='{{category}}'>{{ category }}</div></li>
+   {% endfor %}
+   </ul>
+
+  <button class="submit">go</button>
 
 {% endblock %}
