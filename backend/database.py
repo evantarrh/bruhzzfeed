@@ -19,3 +19,10 @@ def addPage(title, images):
 
 def getPage(urlstring):
   return db.pages.find_one({"urlstring": urlstring})
+
+def getRandomPage():
+  all_pages = db.pages.find()
+  urls = []
+  for page in all_pages:
+    urls.append(page["urlstring"])
+  return random.choice(urls)

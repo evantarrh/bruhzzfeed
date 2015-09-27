@@ -1,6 +1,13 @@
 $().ready(function() {
   var categories = [];
 
+  $('.bruh').mouseenter(function(event){
+    $(event.currentTarget).html("Take a chance");
+  });
+  $('.bruh').mouseleave(function(event){
+    $(event.currentTarget).html("BruhzzFeed");
+  });
+
   $('.submit').click(function(event) {
     if (categories.length === 0) {
       $(event.currentTarget).html('choose some categories ya dingus');
@@ -55,6 +62,15 @@ $().ready(function() {
      // push to categories
     console.log(categories);
 
-   }
-  );
+  });
+  $( '.buttons > li ' ).mouseenter(function(event) {
+    if($(event.currentTarget).hasClass('selected')){
+      $(event.currentTarget).addClass('close');
+    }
+  });
+  $( '.buttons > li ' ).mouseleave(function(event) {
+    if($(event.currentTarget).hasClass('close')){
+      $(event.currentTarget).removeClass('close');
+    }
+  });
 });

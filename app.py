@@ -14,14 +14,14 @@ pos_tagger = part_of_speech.Tagger()
 pos_tagger.initialize()
 
 app = Flask(__name__)
-# app.config["DEBUG"] = True
+app.config["DEBUG"] = True
 
 @app.route("/")
 def hello():
-    # TEST categories
     categories = ['animals','tech','cats','dogs','funny','babies',
       'anime','gaming','music','nature','food','sports','celebs','reaction']
-    return render_template("index.html", categories=categories)
+    random_url = db.getRandomPage()
+    return render_template("index.html", categories=categories, link=random_url)
 
 def get_imgur_images(categories):
   images = []

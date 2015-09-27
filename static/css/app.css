@@ -46,6 +46,9 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+*:focus {
+    outline: 0;
+}
 
 /* END CSS RESET */
 
@@ -70,6 +73,25 @@ h1 {
   padding: 2rem 3rem;
   color: #e32;
   line-height: 5rem;
+}
+
+.bruh {
+  color: #e32;
+  text-decoration: none;
+}
+
+.bruh:hover {
+  box-shadow: 0 5px #e32;
+}
+
+.bruh:hover::after{
+  content: " \261E";
+  margin-left: 5px;
+  line-height: 0;
+  position: relative;
+  top: 4px;
+  color: #e32;
+  font-size: 60px;
 }
 
 ul {
@@ -102,6 +124,11 @@ li {
   content: "\2713";
   float: left;
   width: 0;
+  transition: 0.2s ease all;
+}
+
+.selected.close {
+  background-color: #a09faa;
 }
 
 button {
@@ -147,6 +174,10 @@ img {
   display: block;
   margin: 0 auto;
   margin-bottom: 3rem;
+}
+
+.buzzword {
+  color: #e32;
 }
 
 button > a {
