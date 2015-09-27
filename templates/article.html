@@ -1,10 +1,17 @@
 {% extends "base.html" %}
 {% block body %}
 
-  <h1>{{title}}</h1>
+  <h1 class="title">{{title}}</h1>
 
-  {% for image in images %}
-    <img src="{{image}}" width="100">
-  {% endfor %}
+  <div class="images-wrapper">
+    {% for image in images %}
+      <div class="list-item">
+        {{ loop.index }}. Wow. Just look at this
+        <img src="{{image}}" width="100">
+      </div>
+    {% endfor %}
+  </div>
+
+  <button><a href="/">Make another!</a></button>
 
 {% endblock %}
