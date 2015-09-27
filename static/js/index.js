@@ -1,7 +1,12 @@
 $().ready(function() {
   var categories = [];
 
-  $('.submit').click(function() {
+  $('.submit').click(function(event) {
+    if (categories.length === 0) {
+      $(event.currentTarget).html('choose some categories ya dingus');
+      return;
+    }
+    $(event.currentTarget).html('ok be patient...');
     $.ajax({
       type: 'POST',
       data: formatCategories(categories),
@@ -24,16 +29,21 @@ $().ready(function() {
   };
 
   $( '.buttons > li > div' ).click(function(event) {
-    var category = $(event.currentTarget);
+    if($('button').html() == 'choose some categories ya dingus') {
+      $('button').html('go!');
+    }
 
-    if (category.hasClass('selected')){
-     category.removeClass('selected');
+    var category = $(event.currentTarget);
+    var listItem = category.parent();
+
+    if (listItem.hasClass('selected')){
+     listItem.removeClass('selected');
      var index = categories.indexOf(category.html());
      if (index > -1){
       categories.splice(index, 1);
      }
     } else {
-     category.addClass('selected');
+     listItem.addClass('selected');
      categories.push(category.html());
     }
      // push to categories

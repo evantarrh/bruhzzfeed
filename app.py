@@ -154,9 +154,7 @@ def get_pos_for_tags(tags_dict):
   return tags_to_pos
 
 def get_title(nouns, plural_nouns, adjectives):
-  print type(structures.sentence_structures)
   sentence = random.choice(structures.sentence_structures)
-  print sentence
   sentence = sentence.replace("number", "13")
   tags = []
 

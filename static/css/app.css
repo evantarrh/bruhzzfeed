@@ -1,3 +1,171 @@
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol, ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* END CSS RESET */
+
+html, body {
+  height: 100%;
+  font-family: Montserrat;
+  font-size: 16px;
+  -webkit-appearance: none;
+}
+
+.wrapper {
+  min-height: 100%;
+  position: relative;
+}
+
+.content {
+  padding-bottom: 80px; /* Height of footer */
+}
+
+h1 {
+  font-size: 4rem;
+  padding: 2rem 3rem;
+  color: #e32;
+  line-height: 5rem;
+}
+
+ul {
+  margin: 20px auto;
+  text-align: center;
+  width: 700px;
+  overflow: hidden;
+  margin-bottom: 3rem;
+}
+
+li {
+  padding: 8px;
+  border-radius: 30px;
+  margin: 20px 3%; /* omg om gomg omg so bad */
+  background-color: #e32;
+  height: 30px;
+  line-height: 30px;
+  color: #fff;
+  float: left;
+  width: 25%;
+  cursor: pointer;
+  transition: 0.2s ease all;
+}
+
+.selected {
+  background-color: #72D77A;
+}
+
+.selected::before {
+  content: "\2713";
+  float: left;
+  width: 0;
+}
+
 button {
-  width: 100px;
+  display: block;
+  margin: 0 auto;
+  font-size: 20px;
+  border: none;
+  padding: 1rem 3rem;
+  font-family: Montserrat, sans-serif;
+  box-shadow: 6px 6px #3a4;
+  background-color: #72D77A;
+  color: #fff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  transition: 0.2s ease all;
+  margin-bottom: 3rem;
+}
+
+button:hover {
+  box-shadow: 3px 3px #3a4;
+  transform: translate(3px, 3px);
+}
+
+footer {
+  position: absolute;
+  height: 80px;
+  line-height: 80px;
+  color: #fff;
+  background-color: #a09faa; /* ▐  ⊙ ▃ ⊙ ▐ */
+  /* bfacaa */
+  text-decoration: none;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+}
+
+footer > div > a {
+  background-color: #e32;
+  padding: 5px 10px;
+  color: #fff;
+  text-decoration: none;
+  margin: 0 3px;
+}
+
+@media only screen and (max-width: 700px) {
+  html {
+    font-size: 14px;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 1rem;
+  }
+
+  ul {
+    margin: 0px auto;
+    margin-bottom: 20px;
+    width: 400px;
+  }
+
+  li {
+    float: none;
+    margin: 20px auto;
+    width: 40%;
+  }
 }
