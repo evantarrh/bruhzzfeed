@@ -50,8 +50,3 @@ topia.termextract==1.1.0
 tornado==4.1
 twilio==3.6.15
 validators==0.7
-vboxapi==1.0
-webassets==0.8
-wsgiref==0.1.2
-xattr==0.6.4
-zope.interface==4.1.1
