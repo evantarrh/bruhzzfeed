@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, url_for, make_response, redirect, request
 from imgurpython import ImgurClient
 from backend import database as db
