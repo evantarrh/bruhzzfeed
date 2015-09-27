@@ -131,6 +131,7 @@ img {
   display:block;
   width: 400px;
   margin: 0 auto;
+  padding-top: 10px;
 }
 
 .images-wrapper {
@@ -141,7 +142,7 @@ img {
 
 .list-item {
   width: 400px;
-  line-height: 2.5rem;
+  line-height: 2rem;
   font-size: 1.25rem;
   display: block;
   margin: 0 auto;

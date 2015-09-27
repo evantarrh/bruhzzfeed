@@ -3,7 +3,7 @@ from flask import Flask, render_template, url_for, make_response, redirect, requ
 from imgurpython import ImgurClient
 from backend import database as db
 from clarifai.client import ClarifaiApi
-import random, json, ast, operator
+import random, json, ast, operator, time
 from topia.termextract import tag as part_of_speech
 import structures, words
 
@@ -26,16 +26,11 @@ def hello():
 def get_imgur_images(categories):
   images = []
 
-  print "number of categories: " + str(len(categories))
-
   total_number_of_images = int(random.choice(words.numbers))
-  print "total number of images: " + str(total_number_of_images)
 
   images_per_category = total_number_of_images / len(categories)
-  print "images per category: " + str(images_per_category)
 
   extra_images = total_number_of_images - len(categories) * images_per_category
-  print "extra images: " + str(extra_images)
 
   for category in categories:
     images_in_category = imgur.gallery_tag(category, sort="viral", window="week").items
@@ -56,6 +51,9 @@ def get_imgur_images(categories):
 
 @app.route("/new", methods=["POST"])
 def create_article():
+  print "handling post request"
+  starting_time = time.time()
+
   # take "categories=tech,anime,sports," and turn it into a list
   categories = request.get_data().split("=")[1]
   categories = categories.split(",")[0:-1]
@@ -63,17 +61,21 @@ def create_article():
   images_and_number = get_imgur_images(categories)
   urls = images_and_number[0]
 
+  print "got images! " + str(time.time() - starting_time)
+
   number_of_images = images_and_number[1]
 
   # get tags for all the images ============================================
 
   tags = get_tags(urls)
+  print "tagged the images! " + str(time.time() - starting_time)
 
   # figure out common tags =================================================
 
   common_tags = find_common_tags(tags)
 
   tags_to_pos = get_pos_for_tags(common_tags)
+  print "got parts of speech for tags! " + str(time.time() - starting_time)
 
   # choose tags based on pos
 
@@ -106,9 +108,11 @@ def create_article():
     new_tuple = (str(url), tags_list)
     images.append(new_tuple)
 
-  print images
+  random.shuffle(images)
 
   urlstring = db.addPage(title, images)
+
+  print "added page /" + urlstring + " to database! " + str(time.time() - starting_time)
 
   return urlstring
 
@@ -117,8 +121,6 @@ def show_article(urlstring):
   info = db.getPage(urlstring)
   if info is None:
     return render_template('404.html')
-
-  print info["images"]
 
   return render_template("article.html", title=info["title"], images=info["images"])
 
@@ -139,7 +141,6 @@ def get_tags(urls):
 
     all_tags.append(tuple)
 
-
   return all_tags
 
 def find_common_tags(tag_sets):
@@ -151,7 +152,6 @@ def find_common_tags(tag_sets):
         tags_to_urls[tag].append(tag_tuple[1])
       else:
         tags_to_urls[tag] = [tag_tuple[1]]
-
 
 
   tag_frequencies = {}
