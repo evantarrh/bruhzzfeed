@@ -3,7 +3,7 @@ from flask import Flask, render_template, url_for, make_response, redirect, requ
 from imgurpython import ImgurClient
 from backend import database as db
 from clarifai.client import ClarifaiApi
-import random, config, json, ast, operator
+import random, json, ast, operator
 from topia.termextract import tag as part_of_speech
 import structures, words
 
@@ -14,7 +14,7 @@ pos_tagger = part_of_speech.Tagger()
 pos_tagger.initialize()
 
 app = Flask(__name__)
-app.config["DEBUG"] = True
+# app.config["DEBUG"] = True
 
 @app.route("/")
 def hello():
