@@ -18,36 +18,9 @@ app.config["DEBUG"] = True
 
 @app.route("/")
 def hello():
-    categories = ['animals','tech','cats','dogs','funny','babies',
-      'anime','gaming','music','nature','food','sports','celebs','reaction']
-    random_url = db.getRandomPage()
-    return render_template("index.html", categories=categories, link=random_url)
-
-def get_imgur_images(categories):
-  images = []
-
-  total_number_of_images = int(random.choice(words.numbers))
-
-  images_per_category = total_number_of_images / len(categories)
-
-  extra_images = total_number_of_images - len(categories) * images_per_category
-
-  for category in categories:
-    images_in_category = imgur.gallery_tag(category, sort="viral", window="week").items
-    random.shuffle(images_in_category)
-
-    image_count = 0
-    for image in images_in_category:
-      if image_count < images_per_category or extra_images > 0:
-        if image.link.split('.')[-1] in ["gif", "png", "jpg"]:
-          if extra_images > 0:
-            extra_images -= 1
-          else:
-            image_count += 1
-          images.append(image.link)
-
-  tuple_to_return = (images, total_number_of_images)
-  return tuple_to_return
+  categories = ['animals','tech','cats','dogs','funny','babies',
+    'anime','gaming','music','nature','food','sports','celebs','reaction']
+  return render_template("index.html", categories=categories)
 
 @app.route("/new", methods=["POST"])
 def create_article():
@@ -65,19 +38,13 @@ def create_article():
 
   number_of_images = images_and_number[1]
 
-  # get tags for all the images ============================================
-
   tags = get_tags(urls)
   print "tagged the images! " + str(time.time() - starting_time)
-
-  # figure out common tags =================================================
 
   common_tags = find_common_tags(tags)
 
   tags_to_pos = get_pos_for_tags(common_tags)
   print "got parts of speech for tags! " + str(time.time() - starting_time)
-
-  # choose tags based on pos
 
   noun_tags = []
   plural_noun_tags = []
@@ -110,7 +77,7 @@ def create_article():
 
   random.shuffle(images)
 
-  urlstring = db.addPage(title, images)
+  urlstring = db.add_page(title, images)
 
   print "added page /" + urlstring + " to database! " + str(time.time() - starting_time)
 
@@ -118,12 +85,42 @@ def create_article():
 
 @app.route("/<urlstring>", methods=["GET"])
 def show_article(urlstring):
-  info = db.getPage(urlstring)
+  info = db.get_page(urlstring)
   if info is None:
     return render_template('404.html')
 
   return render_template("article.html", title=info["title"], images=info["images"])
 
+@app.route("/random", methods=["GET"])
+def take_a_chance():
+  return redirect("/" + db.get_random_page())
+
+
+def get_imgur_images(categories):
+  images = []
+
+  total_number_of_images = int(random.choice(words.numbers))
+
+  images_per_category = total_number_of_images / len(categories)
+
+  extra_images = total_number_of_images - len(categories) * images_per_category
+
+  for category in categories:
+    images_in_category = imgur.gallery_tag(category, sort="viral", window="week").items
+    random.shuffle(images_in_category)
+
+    image_count = 0
+    for image in images_in_category:
+      if image_count < images_per_category or extra_images > 0:
+        if image.link.split('.')[-1] in ["gif", "png", "jpg"]:
+          if extra_images > 0:
+            extra_images -= 1
+          else:
+            image_count += 1
+          images.append(image.link)
+
+  tuple_to_return = (images, total_number_of_images)
+  return tuple_to_return
 
 def get_tags(urls):
   all_tags = []
