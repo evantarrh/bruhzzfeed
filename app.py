@@ -1,5 +1,6 @@
 import os
 from flask import Flask, render_template, url_for, make_response, redirect, request
+from flask_limiter import Limiter
 from imgurpython import ImgurClient
 from backend import database as db
 from clarifai.client import ClarifaiApi
@@ -14,7 +15,8 @@ pos_tagger = part_of_speech.Tagger()
 pos_tagger.initialize()
 
 app = Flask(__name__)
-app.config["DEBUG"] = True
+# app.config["DEBUG"] = True
+limiter = Limiter(app)
 
 @app.route("/")
 def hello():
@@ -23,6 +25,7 @@ def hello():
   return render_template("index.html", categories=categories)
 
 @app.route("/new", methods=["POST"])
+@limiter.limit("4/hour")
 def create_article():
   print "handling post request"
   starting_time = time.time()

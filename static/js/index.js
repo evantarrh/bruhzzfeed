@@ -1,5 +1,6 @@
 $().ready(function() {
   var categories = [];
+  var errorShown = false;
 
   $('.bruh').mouseenter(function(event){
     $(event.currentTarget).html("Take a chance");
@@ -28,7 +29,11 @@ $().ready(function() {
         window.location.href = window.location.href + response;
       },
       error: function(response){
-        // do nothing lol
+        // rate limiting bc yup
+        if (!errorShown) {
+          $('.submit').replaceWith('<div class="error"><p>You\'re making too many new articles!</p><p>Why not try a <a href="/random">random one</a>?</p></div>');
+          errorShown = true;
+        }
       }
     });
   });

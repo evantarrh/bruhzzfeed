@@ -152,6 +152,24 @@ button:hover {
   transform: translate(3px, 3px);
 }
 
+.error {
+  font-size: 1.2rem;
+  line-height: 2rem;
+  padding: 1rem 3rem;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.error > p > a {
+  color: #e32;
+  text-decoration: none;
+  padding-right: 2px;
+}
+
+.error > p > a:hover {
+  box-shadow: 0 2px #e32;
+}
+
 /* ~~~~~~~~~~~~~~~~~~ ARTICLE ~~~~~~~~~~~~~~~~~~~~~~ */
 
 img {
