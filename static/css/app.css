@@ -164,7 +164,7 @@ button:hover {
   text-align: center;
 }
 
-.error > p > a {
+.error > p > a, .mobile-only > a {
   color: #e32;
   text-decoration: none;
   padding-right: 2px;
@@ -174,11 +174,38 @@ button:hover {
   box-shadow: 0 2px #e32;
 }
 
+.mobile-only {
+  display: none;
+}
+
+.mobile-only > p {
+  line-height: 2.5rem;
+  font-size: 18px;
+}
+
+.mobile-only > p > a {
+  color: #e32;
+  box-shadow: 0 2px #e32;
+  line-height: 2rem;
+  text-decoration: none;
+}
+
+.mobile-only > p > a::after {
+  content: " \261E";
+  margin-left: 5px;
+  line-height: 0;
+  position: relative;
+  top: 4px;
+  color: #e32;
+  font-size: 24px;
+}
+
 /* ~~~~~~~~~~~~~~~~~~ ARTICLE ~~~~~~~~~~~~~~~~~~~~~~ */
 
 img {
   display:block;
-  width: 400px;
+  max-width: 400px;
+  width: 100%;
   margin: 0 auto;
   padding-top: 10px;
 }
@@ -190,7 +217,8 @@ img {
 }
 
 .list-item {
-  width: 400px;
+  max-width: 400px;
+  width: 100%;
   line-height: 2rem;
   font-size: 1.25rem;
   display: block;
@@ -239,33 +267,45 @@ footer > div > a {
   }
 
   h1 {
-    text-align: center;
-    margin: 1rem;
-  }
-
-  .title {
     font-size: 3rem;
     line-height: 4rem;
-    text-align: left;
+    text-align: center;
+    margin: 1rem;
+    padding: 0;
   }
 
   ul {
     margin: 0px auto;
     margin-bottom: 20px;
-    width: 400px;
+    width: 320px;
   }
 
   li {
     float: none;
     margin: 20px auto;
-    width: 40%;
+    width: 50%;
+  }
+
+  footer {
+    font-size: 14px;
+  }
+
+  .mobile-only {
+    display: block;
+    text-align: center;
+    line-height: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .submit {
+    margin-bottom: 10px;
   }
 }
 
 @media only screen and (max-width: 500px) {
   .title {
-    font-size: 2.5rem;
-    line-height: 3rem;
-    margin: 0;
+    font-size: 2rem;
+    line-height: 2.5rem;
+    margin: 1rem;
   }
 }
