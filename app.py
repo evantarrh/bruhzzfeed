@@ -180,12 +180,12 @@ def get_title(nouns, plural_nouns, adjectives, number_of_images):
     adverb = random.choice(words.adverbs)
     sentence = sentence.replace("adverb", adverb.capitalize(), 1)
 
-  while "noun" in sentence and len(nouns) > 0:
-
+  while "nouns" in sentence and len(nouns) > 0:
     noun = random.choice(nouns)
     tags.append(noun)
     nouns.remove(noun)
-    sentence = sentence.replace("noun", noun.capitalize(), 1)
+    noun = pluralize(noun)
+    sentence = sentence.replace("nouns", noun.capitalize(), 1)
 
   while "adjective" in sentence and len(adjectives) > 0:
     adjective = random.choice(adjectives)
@@ -213,6 +213,19 @@ def get_title(nouns, plural_nouns, adjectives, number_of_images):
     sentence = sentence.replace("years", number, 1)
 
   return sentence
+
+def pluralize(noun):
+  """An incomplete but reasonable attempt at pluralizing tags given by Clarifai"""
+  if noun == 'child':
+    return 'children'
+
+  last_letter = noun[len(noun) - 1]
+  if last_letter == 'y':
+    noun = noun[:-1] + 'ies'
+  elif last_letter != 's':
+    noun += 's'
+
+  return noun
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
