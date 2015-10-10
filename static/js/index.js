@@ -64,8 +64,6 @@ $().ready(function() {
      listItem.addClass('selected');
      categories.push(category.html());
     }
-     // push to categories
-    console.log(categories);
 
   });
   $( '.buttons > li ' ).mouseenter(function(event) {

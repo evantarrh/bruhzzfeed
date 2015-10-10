@@ -27,62 +27,35 @@ def hello():
 @app.route("/new", methods=["POST"])
 @limiter.limit("4/hour")
 def create_article():
-  print "handling post request"
-  starting_time = time.time()
+  """Given a bunch of categories, get popular images in those categories,
+  tag them, find the most common tags, and create an article based on
+  those tags and those images."""
 
   # take "categories=tech,anime,sports," and turn it into a list
   categories = request.get_data().split("=")[1]
   categories = categories.split(",")[0:-1]
 
-  images_and_number = get_imgur_images(categories)
-  urls = images_and_number[0]
+  urls = get_imgur_images(categories)
+  number_of_images = len(urls)
 
-  print "got images! " + str(time.time() - starting_time)
+  # get most common tags for images, and get part of speech for all of them
+  images_with_tags = get_tags(urls)
 
-  number_of_images = images_and_number[1]
+  common_tags = find_common_tags(images_with_tags)
+  tags_with_pos = get_pos_for_tags(common_tags)
 
-  tags = get_tags(urls)
-  print "tagged the images! " + str(time.time() - starting_time)
+  # generate title based on tags with part of speech, and number of images
+  title = get_title(tags_with_pos, len(urls))
 
-  common_tags = find_common_tags(tags)
+  for tag_pair in images_with_tags:
+    for tag in tag_pair[1]:
+      speech_part = pos_tagger(tag)[0][1]
+      # if it's an adjective, remove it from the tags sent to the database
+      if speech_part == "JJ":
+        tag_pair[1].remove(tag)
 
-  tags_to_pos = get_pos_for_tags(common_tags)
-  print "got parts of speech for tags! " + str(time.time() - starting_time)
-
-  noun_tags = []
-  plural_noun_tags = []
-  adjective_tags = []
-
-  for tag in tags_to_pos:
-    if tags_to_pos[tag] == "JJ":
-      adjective_tags.append(tag)
-    if tags_to_pos[tag] == "NN":
-      noun_tags.append(tag)
-    if tags_to_pos[tag] == "NNS":
-      plural_noun_tags.append(tag)
-
-  title = get_title(noun_tags, plural_noun_tags, adjective_tags, number_of_images)
-
-  images = []
-
-  for url in urls:
-    tags_list = []
-
-    for pair in tags:
-      if pair[1] == url:
-        for individual_tag in pair[0]:
-          speech_part = pos_tagger(individual_tag)[0][1]
-          if speech_part == "NN":
-            tags_list.append(individual_tag)
-
-    new_tuple = (str(url), tags_list)
-    images.append(new_tuple)
-
-  random.shuffle(images)
-
-  urlstring = db.add_page(title, images)
-
-  print "added page /" + urlstring + " to database! " + str(time.time() - starting_time)
+  random.shuffle(images_with_tags)
+  urlstring = db.add_page(title, images_with_tags)
 
   return urlstring
 
@@ -98,7 +71,6 @@ def show_article(urlstring):
 def take_a_chance():
   return redirect("/" + db.get_random_page())
 
-
 def get_imgur_images(categories):
   images = []
 
@@ -106,7 +78,8 @@ def get_imgur_images(categories):
 
   images_per_category = total_number_of_images / len(categories)
 
-  extra_images = total_number_of_images - len(categories) * images_per_category
+  # doing integer division to get the number of images per catgeory leaves leftovers!
+  extra_images = total_number_of_images % len(categories)
 
   for category in categories:
     images_in_category = imgur.gallery_tag(category, sort="viral", window="week").items
@@ -115,6 +88,7 @@ def get_imgur_images(categories):
     image_count = 0
     for image in images_in_category:
       if image_count < images_per_category or extra_images > 0:
+        # only keep image links that end in proper file extension
         if image.link.split('.')[-1] in ["gif", "png", "jpg"]:
           if extra_images > 0:
             extra_images -= 1
@@ -122,23 +96,24 @@ def get_imgur_images(categories):
             image_count += 1
           images.append(image.link)
 
-  tuple_to_return = (images, total_number_of_images)
-  return tuple_to_return
+  return images
 
 def get_tags(urls):
   all_tags = []
-  for i in urls:
-    one_image_tags = json.dumps(clarifai_api.tag_image_urls(str(i))['results'][0]['result']['tag']['classes'])
+  for url in urls:
+
+    clarifai_tags = clarifai_api.tag_image_urls(str(url))
+    one_image_tags = json.dumps(clarifai_tags['results'][0]['result']['tag']['classes'])
 
     # json.dumps returns a string, which we have to evaluate as a list
     one_image_tags = ast.literal_eval(one_image_tags)
 
-    # sometimes clarifai returns a list inside a list
+    # sometimes clarifai returns a list inside a list (for gifs).
+    # if so, we just take the first list
     if type(one_image_tags[0]) is list:
       one_image_tags = one_image_tags[0]
 
-    tuple = (one_image_tags, str(i))
-
+    tuple = (str(url), one_image_tags)
     all_tags.append(tuple)
 
   return all_tags
@@ -146,13 +121,12 @@ def get_tags(urls):
 def find_common_tags(tag_sets):
   tags_to_urls = {}
   for tag_tuple in tag_sets:
-    tag_set = tag_tuple[0]
+    tag_set = tag_tuple[1]
     for tag in tag_set:
       if tag in tags_to_urls:
-        tags_to_urls[tag].append(tag_tuple[1])
+        tags_to_urls[tag].append(tag_tuple[0])
       else:
-        tags_to_urls[tag] = [tag_tuple[1]]
-
+        tags_to_urls[tag] = [tag_tuple[0]]
 
   tag_frequencies = {}
 
@@ -166,15 +140,22 @@ def find_common_tags(tag_sets):
   return top_tags
 
 def get_pos_for_tags(tags_dict):
-  tags_to_pos = {}
+  tags_with_pos = {}
   for tag in tags_dict:
-    tags_to_pos[tag] = pos_tagger(tag)[0][1]
-  return tags_to_pos
+    tags_with_pos[tag] = pos_tagger(tag)[0][1]
+  return tags_with_pos
 
-def get_title(nouns, plural_nouns, adjectives, number_of_images):
+def get_title(tags_with_pos, number_of_images):
   sentence = random.choice(structures.sentence_structures)
 
-  tags = []
+  nouns = []
+  adjectives = []
+
+  for tag in tags_with_pos:
+    if tags_with_pos[tag] == "JJ":
+      adjectives.append(tag)
+    if tags_with_pos[tag] == "NN" or tags_with_pos[tag] == "NNS":
+      nouns.append(tag)
 
   if "adverb" in sentence:
     adverb = random.choice(words.adverbs)
@@ -182,14 +163,12 @@ def get_title(nouns, plural_nouns, adjectives, number_of_images):
 
   while "nouns" in sentence and len(nouns) > 0:
     noun = random.choice(nouns)
-    tags.append(noun)
     nouns.remove(noun)
     noun = pluralize(noun)
     sentence = sentence.replace("nouns", noun.capitalize(), 1)
 
   while "adjective" in sentence and len(adjectives) > 0:
     adjective = random.choice(adjectives)
-    tags.append(adjective)
     adjectives.remove(adjective)
     sentence = sentence.replace("adjective", adjective.capitalize(), 1)
 
@@ -203,7 +182,7 @@ def get_title(nouns, plural_nouns, adjectives, number_of_images):
 
   if "exclamations" in sentence:
     exclamation = random.choice(words.exclamations)
-    sentence = sentence.replace("exclamations", exclamation)
+    sentence = sentence.replace("exclamations", exclamation.capitalize())
 
   while "number" in sentence:
     sentence = sentence.replace("number", str(number_of_images), 1)
