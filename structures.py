@@ -1,9 +1,9 @@
-sentence_structures = ["number adverb adjective nouns That Will verb Your Mind",
-  "These number adjective nouns Will Make You exclamations",
-  "number adjective nouns That Prove How adjective nouns Are",
-  "The number adverb adjective nouns You Need In Your Life",
-  "The number adjective nouns Only nouns Will Understand",
-  "number adjective nouns All nouns Will Love",
-  "number Times nouns Were Too adjective For Us To Handle",
-  "number nouns Whose years Was More adjective Than Yours"
+sentence_structures = ["Number Adverb Adjective Nouns That Will Verb Your Mind",
+  "These Number Adjective Nouns Will Make You Exclamation",
+  "Number Adjective Nouns That Prove How Adjective Nouns Are",
+  "The Number Adverb Adjective Nouns You Need In Your Life",
+  "The Number Adjective Nouns Only Nouns Will Understand",
+  "Number Adjective Nouns All Nouns Will Love",
+  "Number Times Nouns Were Too Adjective For Us To Handle",
+  "Number Nouns Whose Year Was More Adjective Than Yours"
   ]

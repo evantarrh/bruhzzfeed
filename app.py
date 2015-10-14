@@ -155,42 +155,29 @@ def get_title(tags_with_pos, number_of_images):
     if tags_with_pos[tag] == "JJ":
       adjectives.append(tag)
     if tags_with_pos[tag] == "NN" or tags_with_pos[tag] == "NNS":
-      nouns.append(tag)
+      nouns.append(pluralize(tag))
 
-  if "adverb" in sentence:
-    adverb = random.choice(words.adverbs)
-    sentence = sentence.replace("adverb", adverb.capitalize(), 1)
+  words_to_replace = {
+    "Nouns": nouns,
+    "Adjective": adjectives,
+    "Adverb": words.adverbs,
+    "Adjective": words.adjectives,
+    "Verb": words.verbs,
+    "Exclamation": words.exclamations,
+    "Year": words.years,
+    "Number": [str(number_of_images)]
+  }
 
-  while "nouns" in sentence and len(nouns) > 0:
-    noun = random.choice(nouns)
-    nouns.remove(noun)
-    noun = pluralize(noun)
-    sentence = sentence.replace("nouns", noun.capitalize(), 1)
+  for word in words_to_replace:
+    sentence = replace_word(sentence, word, words_to_replace[word])
 
-  while "adjective" in sentence and len(adjectives) > 0:
-    adjective = random.choice(adjectives)
-    adjectives.remove(adjective)
-    sentence = sentence.replace("adjective", adjective.capitalize(), 1)
+  return sentence
 
-  while "adjective" in sentence:
-    adjective = random.choice(words.adjectives)
-    sentence = sentence.replace("adjective", adjective.capitalize(), 1)
-
-  while "verb" in sentence:
-    verb = random.choice(words.verbs)
-    sentence = sentence.replace("verb", verb.capitalize(), 1)
-
-  if "exclamations" in sentence:
-    exclamation = random.choice(words.exclamations)
-    sentence = sentence.replace("exclamations", exclamation.capitalize())
-
-  while "number" in sentence:
-    sentence = sentence.replace("number", str(number_of_images), 1)
-
-  while "years" in sentence:
-    number = random.choice(words.years)
-    sentence = sentence.replace("years", number, 1)
-
+def replace_word(sentence, target, replacements):
+  while target in sentence and len(replacements) > 0:
+    replacement = random.choice(replacements)
+    replacements.remove(replacement)
+    sentence = sentence.replace(target, replacement.capitalize(), 1)
   return sentence
 
 def pluralize(noun):
