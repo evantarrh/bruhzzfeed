@@ -85,15 +85,15 @@ def get_imgur_images(categories):
     images_in_category = imgur.gallery_tag(category, sort="viral", window="week").items
     random.shuffle(images_in_category)
 
-    image_count = 0
+    images_to_add = images_per_category
     for image in images_in_category:
-      if image_count < images_per_category or extra_images > 0:
+      if (images_to_add + extra_images) > 0:
         # only keep image links that end in proper file extension
         if image.link.split('.')[-1] in ["gif", "png", "jpg"]:
           if extra_images > 0:
             extra_images -= 1
           else:
-            image_count += 1
+            images_to_add -= 1
           images.append(image.link)
 
   return images
@@ -140,10 +140,9 @@ def find_common_tags(tag_sets):
   return top_tags
 
 def get_pos_for_tags(tags_dict):
-  tags_with_pos = {}
   for tag in tags_dict:
-    tags_with_pos[tag] = pos_tagger(tag)[0][1]
-  return tags_with_pos
+    tags_dict[tag] = pos_tagger(tag)[0][1]
+  return tags_dict
 
 def get_title(tags_with_pos, number_of_images):
   sentence = random.choice(structures.sentence_structures)
