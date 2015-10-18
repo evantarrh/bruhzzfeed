@@ -1,4 +1,5 @@
 config.py
+config.sh
 *.pyc
 example_data.py
 example_tags.py
