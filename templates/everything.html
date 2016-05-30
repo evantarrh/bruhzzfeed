@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block body %}
+  <p>shhhh lol</p>
+  {% for article in articles %}
+    <p><a href="/{{ article[1] }}">{{ article[0] }}</a>
+  {% endfor %}
+{% endblock %}

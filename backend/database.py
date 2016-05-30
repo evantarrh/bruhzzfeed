@@ -30,6 +30,9 @@ def add_page(title, images):
 def get_page(urlstring):
   return db.bruhzzfeed_pages.find_one({"urlstring": urlstring})
 
+def get_all_articles():
+  return db.bruhzzfeed_pages.find()
+
 def get_random_page():
   all_pages = db.bruhzzfeed_pages.find()
   urls = []

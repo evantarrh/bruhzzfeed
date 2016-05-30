@@ -71,6 +71,15 @@ def show_article(urlstring):
 def take_a_chance():
   return redirect("/" + db.get_random_page())
 
+@app.route("/everything", methods=["GET"])
+def show_everything():
+  articles = []
+
+  for article in db.get_all_articles():
+    articles.append((article["title"], article["urlstring"]))
+
+  return render_template("everything.html", articles=articles)
+
 def get_imgur_images(categories):
   images = []
 
